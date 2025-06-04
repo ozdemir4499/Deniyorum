@@ -1,33 +1,856 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-    <title>Hakan8n - n8n & TikTok API Integration</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otomasyon Merkezi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
-        header { background: #f4f4f4; padding: 20px; text-align: center; border-radius: 5px; }
-        h1 { color: #333; }
-        a { color: #0366d6; text-decoration: none; }
-        footer { margin-top: 20px; text-align: center; font-size: 0.9em; color: #666; }
+        :root {
+            --bg-dark: #1A1A1A;
+            --bg-card: #2A2A2A;
+            --bg-card-hover: #353535;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --tiktok-blue: #25F4EE;
+            --instagram-pink: #E1306C;
+            --success-green: #22C55E;
+            --error-red: #EF4444;
+            --warning-orange: #F59E0B;
+            --border-color: #333333;
+            
+            /* Light theme */
+            --bg-light: #FFFFFF;
+            --bg-card-light: #F8F9FA;
+            --bg-card-hover-light: #F1F3F4;
+            --text-primary-light: #1F2937;
+            --text-secondary-light: #6B7280;
+            --border-color-light: #E5E7EB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        body.light {
+            background: var(--bg-light);
+            color: var(--text-primary-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        body.light header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid var(--border-color-light);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--tiktok-blue), var(--instagram-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .theme-toggle {
+            background: linear-gradient(45deg, var(--tiktok-blue), var(--instagram-pink));
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(45deg, #1A1A1A, #2A2A2A, #3D2B69, #1A1A1A);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        body.light .hero {
+            background: linear-gradient(45deg, #F8F9FA, #E3F2FD, #E8F5E8, #FFF3E0);
+            background-size: 400% 400%;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="200" cy="200" r="2" fill="rgba(37,244,238,0.3)"><animate attributeName="r" values="2;20;2" dur="3s" repeatCount="indefinite"/></circle><circle cx="800" cy="300" r="3" fill="rgba(225,48,108,0.3)"><animate attributeName="r" values="3;15;3" dur="4s" repeatCount="indefinite"/></circle><circle cx="400" cy="600" r="2" fill="rgba(37,244,238,0.2)"><animate attributeName="r" values="2;25;2" dur="5s" repeatCount="indefinite"/></circle></svg>');
+            opacity: 0.6;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--tiktok-blue), var(--instagram-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 2rem 0;
+            background: var(--bg-dark);
+        }
+
+        body.light .search-section {
+            background: var(--bg-light);
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        body.light .search-input {
+            border-color: var(--border-color-light);
+            background: var(--bg-card-light);
+            color: var(--text-primary-light);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--tiktok-blue);
+            box-shadow: 0 0 0 3px rgba(37, 244, 238, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        /* Cards Section */
+        .cards-section {
+            padding: 4rem 0;
+            background: var(--bg-dark);
+        }
+
+        body.light .cards-section {
+            background: var(--bg-light);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.light .social-card {
+            background: var(--bg-card-light);
+            border-color: var(--border-color-light);
+        }
+
+        .social-card:hover {
+            transform: scale(1.02);
+            background: var(--bg-card-hover);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light .social-card:hover {
+            background: var(--bg-card-hover-light);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .platform-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .platform-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .tiktok { background: linear-gradient(45deg, #000000, var(--tiktok-blue)); }
+        .instagram { background: linear-gradient(45deg, var(--instagram-pink), #F77737, #FCAF45); }
+        .twitter { background: linear-gradient(45deg, #1DA1F2, #14171A); }
+        .linkedin { background: linear-gradient(45deg, #0077B5, #00A0DC); }
+        .discord { background: linear-gradient(45deg, #5865F2, #7289DA); }
+
+        .platform-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .platform-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success-green);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-disabled {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning-orange);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .card-stats {
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-weight: 500;
+            font-family: 'Courier New', monospace;
+        }
+
+        .manage-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, var(--tiktok-blue), var(--instagram-pink));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .manage-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 244, 238, 0.3);
+        }
+
+        .manage-btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0 2rem;
+            text-align: center;
+        }
+
+        body.light footer {
+            background: var(--bg-card-light);
+            border-top: 1px solid var(--border-color-light);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        body.light .footer-link {
+            color: var(--text-secondary-light);
+        }
+
+        .footer-link:hover {
+            color: var(--tiktok-blue);
+        }
+
+        .footer-bottom {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .social-card {
+                padding: 1.5rem;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-input {
+                padding: 12px 40px 12px 16px;
+            }
+        }
+
+        /* Hidden class for filtering */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to Hakan8n</h1>
-        <p>Automation & TikTok API Integration via n8n</p>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-robot"></i> Hakan8n
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i> <span id="theme-text">Light Mode</span>
+                </button>
+            </div>
+        </div>
     </header>
 
-    <section>
-        <h2>About This Project</h2>
-        <p>This is the central hub for my n8n automation workflows, including TikTok API integration.</p>
-        <p><strong>Key Links:</strong></p>
-        <ul>
-            <li><a href="/privacy.html">Privacy Policy</a></li>
-            <li><a href="/terms.html">Terms of Service</a></li>
-        </ul>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Otomasyon Merkezi</h1>
+                <p>n8n ile TikTok, Instagram, Twitter/X ve daha fazlasına bağlantılar. Sosyal medya otomasyonunuzu tek yerden yönetin.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Entegrasyonları ara..." id="searchInput">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+    </section>
+
+    <section class="cards-section">
+        <div class="container">
+            <div class="cards-grid" id="cardsGrid">
+                <!-- TikTok API Card -->
+                <div class="social-card" data-platform="tiktok">
+                    <div class="card-header">
+                        <div class="platform-info">
+                            <div class="platform-icon tiktok">
+                                <i class="fab fa-tiktok"></i>
+                            </div>
+                            <div>
+                                <div class="platform-name">TikTok API</div>
+                                <div class="platform-subtitle">n8n entegrasyonu</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-active">
+                            <div class="status-dot"></div>
+                            Active
+                        </div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Son sync:</span>
+                            <span class="stat-value">5 dakika önce</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">API çağrıları:</span>
+                            <span class="stat-value">847/1000</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Başarı oranı:</span>
+                            <span class="stat-value">98.5%</span>
+                        </div>
+                    </div>
+                    <button class="manage-btn" onclick="manageIntegration('tiktok')">
+                        <i class="fas fa-cog"></i> Yönet
+                    </button>
+                </div>
+
+                <!-- Instagram Graph API Card -->
+                <div class="social-card" data-platform="instagram">
+                    <div class="card-header">
+                        <div class="platform-info">
+                            <div class="platform-icon instagram">
+                                <i class="fab fa-instagram"></i>
+                            </div>
+                            <div>
+                                <div class="platform-name">Instagram Graph API</div>
+                                <div class="platform-subtitle">Meta Business</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-active">
+                            <div class="status-dot"></div>
+                            Active
+                        </div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Son sync:</span>
+                            <span class="stat-value">12 dakika önce</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">API çağrıları:</span>
+                            <span class="stat-value">234/500</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Başarı oranı:</span>
+                            <span class="stat-value">97.2%</span>
+                        </div>
+                    </div>
+                    <button class="manage-btn" onclick="manageIntegration('instagram')">
+                        <i class="fas fa-cog"></i> Yönet
+                    </button>
+                </div>
+
+                <!-- Twitter/X Bot Card -->
+                <div class="social-card" data-platform="twitter">
+                    <div class="card-header">
+                        <div class="platform-info">
+                            <div class="platform-icon twitter">
+                                <i class="fab fa-x-twitter"></i>
+                            </div>
+                            <div>
+                                <div class="platform-name">Twitter/X Bot</div>
+                                <div class="platform-subtitle">API v2</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-warning">
+                            <div class="status-dot"></div>
+                            Limited
+                        </div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Son sync:</span>
+                            <span class="stat-value">1 saat önce</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">API çağrıları:</span>
+                            <span class="stat-value">89/100</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Başarı oranı:</span>
+                            <span class="stat-value">94.8%</span>
+                        </div>
+                    </div>
+                    <button class="manage-btn" onclick="manageIntegration('twitter')">
+                        <i class="fas fa-cog"></i> Yönet
+                    </button>
+                </div>
+
+                <!-- LinkedIn Automation Card -->
+                <div class="social-card" data-platform="linkedin">
+                    <div class="card-header">
+                        <div class="platform-info">
+                            <div class="platform-icon linkedin">
+                                <i class="fab fa-linkedin"></i>
+                            </div>
+                            <div>
+                                <div class="platform-name">LinkedIn Otomasyon</div>
+                                <div class="platform-subtitle">API entegrasyonu</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-active">
+                            <div class="status-dot"></div>
+                            Active
+                        </div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Son sync:</span>
+                            <span class="stat-value">8 dakika önce</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">API çağrıları:</span>
+                            <span class="stat-value">156/300</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Başarı oranı:</span>
+                            <span class="stat-value">99.1%</span>
+                        </div>
+                    </div>
+                    <button class="manage-btn" onclick="manageIntegration('linkedin')">
+                        <i class="fas fa-cog"></i> Yönet
+                    </button>
+                </div>
+
+                <!-- Discord Webhook Card -->
+                <div class="social-card" data-platform="discord">
+                    <div class="card-header">
+                        <div class="platform-info">
+                            <div class="platform-icon discord">
+                                <i class="fab fa-discord"></i>
+                            </div>
+                            <div>
+                                <div class="platform-name">Discord Webhook</div>
+                                <div class="platform-subtitle">Bildirim sistemi</div>
+                            </div>
+                        </div>
+                        <div class="status-badge status-disabled">
+                            <div class="status-dot"></div>
+                            Disabled
+                        </div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Son sync:</span>
+                            <span class="stat-value">2 gün önce</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Mesaj gönderimi:</span>
+                            <span class="stat-value">0/unlimited</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Başarı oranı:</span>
+                            <span class="stat-value">-</span>
+                        </div>
+                    </div>
+                    <button class="manage-btn" disabled onclick="manageIntegration('discord')">
+                        <i class="fas fa-cog"></i> Yönet
+                    </button>
+                </div>
+            </div>
+        </div>
     </section>
 
     <footer>
-        <p>© 2024 Hakan8n. Connected via <a href="https://www.hakan8n.online.com">www.hakan8n.online.com</a></p>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="https://github.com/hakan8n" class="footer-link" target="_blank">
+                    <i class="fab fa-github"></i> GitHub Repo
+                </a>
+                <a href="#" class="footer-link">API Dokümanları</a>
+                <a href="#" class="footer-link">Destek</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Hakan8n Otomasyon Merkezi. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
     </footer>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const themeText = document.getElementById('theme-text');
+            const themeIcon = document.querySelector('.theme-toggle i');
+            
+            body.classList.toggle('light');
+            
+            if (body.classList.contains('light')) {
+                themeText.textContent = 'Dark Mode';
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeText.textContent = 'Light Mode';
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load theme preference
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light');
+                document.getElementById('theme-text').textContent = 'Dark Mode';
+                document.querySelector('.theme-toggle i').className = 'fas fa-sun';
+            }
+        }
+
+        // Search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const cards = document.querySelectorAll('.social-card');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+
+                cards.forEach(card => {
+                    const platformName = card.querySelector('.platform-name').textContent.toLowerCase();
+                    const platformSubtitle = card.querySelector('.platform-subtitle').textContent.toLowerCase();
+                    const platform = card.getAttribute('data-platform').toLowerCase();
+
+                    if (platformName.includes(searchTerm) || 
+                        platformSubtitle.includes(searchTerm) || 
+                        platform.includes(searchTerm)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            });
+        }
+
+        // Manage integration
+        function manageIntegration(platform) {
+            console.log(`${platform} entegrasyonu yönetiliyor...`);
+            
+            // Show a mock management interface
+            const messages = {
+                tiktok: 'TikTok API ayarları açılıyor...',
+                instagram: 'Instagram Graph API yönetim paneli yükleniyor...',
+                twitter: 'Twitter/X Bot ayarları (sınırlı erişim)...',
+                linkedin: 'LinkedIn otomasyon ayarları...',
+                discord: 'Discord webhook yapılandırması (şu anda devre dışı)...'
+            };
+
+            alert(messages[platform] || 'Entegrasyon yönetimi...');
+            
+            // In a real application, this would navigate to the management page
+            // window.location.href = `/manage/${platform}`;
+        }
+
+        // Simulate real-time updates
+        function simulateRealTimeUpdates() {
+            const updateIntervals = [10000, 15000, 20000]; // 10s, 15s, 20s
+            
+            setInterval(() => {
+                // Update TikTok sync time randomly
+                const tiktokCard = document.querySelector('[data-platform="tiktok"]');
+                const syncTime = Math.floor(Math.random() * 10) + 1;
+                const syncElement = tiktokCard.querySelector('.stat-value');
+                if (syncElement) {
+                    syncElement.textContent = `${syncTime} dakika önce`;
+                }
+            }, updateIntervals[0]);
+
+            setInterval(() => {
+                // Update API call counts
+                const cards = document.querySelectorAll('.social-card');
+                cards.forEach(card => {
+                    const apiStat = card.querySelectorAll('.stat-value')[1];
+                    if (apiStat && !card.querySelector('.status-disabled')) {
+                        const current = apiStat.textContent.split('/');
+                        if (current.length === 2) {
+                            const newCount = Math.min(parseInt(current[0]) + Math.floor(Math.random() * 3), parseInt(current[1]));
+                            apiStat.textContent = `${newCount}/${current[1]}`;
+                        }
+                    }
+                });
+            }, updateIntervals[1]);
+        }
+
+        // Smooth scrolling for internal links
+        function setupSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            setupSearch();
+            setupSmoothScrolling();
+            simulateRealTimeUpdates();
+            
+            // Add loading animation completion
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 500);
+
+            console.log('🚀 Hakan8n Otomasyon Merkezi yüklendi!');
+        });
+
+        // Add some interactivity for card hover effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.social-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.02) translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1) translateY(0)';
+                });
+            });
+        });
+
+        // Error handling for failed integrations
+        window.addEventListener('error', function(e) {
+            console.error('Uygulama hatası:', e.error);
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+K or Cmd+K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+            
+            // Escape to clear search
+            if (e.key === 'Escape') {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput === document.activeElement) {
+                    searchInput.value = '';
+                    searchInput.dispatchEvent(new Event('input'));
+                    searchInput.blur();
+                }
+            }
+        });
+    </script>
 </body>
 </html>
